@@ -1,0 +1,30 @@
+[
+    {
+        "type": "numeric",
+        "title": "Temperatur Obergrenze",
+        "desc": "Obergrenze für Temperatur",
+        "section": "Two Scales Widget",
+        "key": "temp_upper_limit"
+    },
+    {
+        "type": "numeric",
+        "title": "Temperatur Untergrenze",
+        "desc": "Untergrenze für Temperatur",
+        "section": "Two Scales Widget",
+        "key": "temp_lower_limit"
+    },
+    {
+        "type": "numeric",
+        "title": "Feuchtigkeit Obergrenze",
+        "desc": "Obergrenze für Feuchtigkeit",
+        "section": "Two Scales Widget",
+        "key": "humidity_upper_limit"
+    },
+    {
+        "type": "numeric",
+        "title": "Feuchtigkeit Untergrenze",
+        "desc": "Untergrenze für Feuchtigkeit",
+        "section": "Two Scales Widget",
+        "key": "humidity_lower_limit"
+    }
+]

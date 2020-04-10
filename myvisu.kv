@@ -1,0 +1,231 @@
+<MyScreens>:
+    Scrn1:
+    Scrn2:
+        id: scrn2
+    Scrn3:
+        id: scrn3
+    Scrn4:
+
+#Home Screen. Navigate to all other screens from here        
+<Scrn1>:
+    name: 'scrn1'
+    GridLayout:
+        cols: 3
+        size_hint: 1, .8
+        pos_hint: {'top':.9, 'left':1}
+        Button:
+            id: bnt1
+            text: 'Wohnzimmer'
+            font_size: 35
+            on_press:
+                root.manager.transition.direction = 'left'
+                root.manager.goto_scrn2()
+        Button:
+            id: btn2
+            text: 'Vorhersage'
+            font_size: 35
+            on_press:
+                root.manager.transition.direction = 'left'
+                root.manager.goto_scrn3()
+        Button:
+            id: btn3
+            text: 'Einstellungen'
+            font_size: 35
+            on_press: app.open_settings()
+    Button:
+        id: btn4
+        text: 'Beenden'
+        on_press: app.get_running_app().stop()
+        size_hint: .1, .1
+        pos_hint: {'top':1, 'left':1}
+    Label:
+        id: lbl1
+        text: 'Hauptmenu'
+        size_hint: .8, .1
+        pos_hint: {'top':1, 'center_x':.5}
+    Label:
+        id: lbl2
+        text: 'lbl2'
+        size_hint: 1, .1
+        pos_hint: {'bottom':1, 'center_x':.5}
+
+#Screen 2 displays the temperature and humidity
+<Scrn2>:
+    name: 'scrn2'
+    on_enter: self.ids.widget1.show_data('data.json')
+    Button:
+        id: back
+        text: 'Hauptmenu'
+        on_press:
+            root.manager.transition.direction = 'right'
+            root.manager.goto_scrn1()
+        size_hint: .1, .1
+        pos_hint: {'top':1, 'left':1}
+    Button:
+        id: btn1
+        text: 'Diagramm'
+        on_press:
+            root.manager.transition.direction = 'right'
+            root.manager.goto_scrn4()
+        size_hint: .1, .1
+        pos_hint: {'top':1, 'right':1}
+    Label:
+        id: lbl1
+        text: 'Wohnzimmer'
+        size_hint: .8, .1
+        pos_hint: {'top':1, 'center_x':.5}
+    Label:
+        id: lbl2
+        text: 'Zeitstempel: ' + root.ids.widget1.val3
+        size_hint: 1, .1
+        pos_hint: {'bottom':1, 'center_x':.5}
+    Two_Scales_Widget:
+        id: widget1
+        size_hint: 1, .8
+        pos_hint: {'top':.9, 'left': 1}
+
+#Screen 3 displays the weather forecast
+<Scrn3>:
+    name: 'scrn3'
+    on_enter:
+        self.ids.widget1.download_data()
+        self.ids.widget1.show_current_weather()
+        self.ids.widget1.show_forecast()
+    Button:
+        id: back
+        text: 'Hauptmenu'
+        on_press:
+            root.manager.transition.direction = 'right'
+            root.manager.goto_scrn1()
+        size_hint: .1, .1
+        pos_hint: {'top':1, 'left':1}
+    Label:
+        id: lbl1
+        text: 'Vorhersage'
+        size_hint: .8, .1
+        pos_hint: {'top':1, 'center_x':.5}
+    Label:
+        id: lbl2
+        text: root.ids.widget1.notification
+        size_hint: 1, .1
+        pos_hint: {'bottom':1, 'center_x':.5}
+    WeatherWidget:
+        id: widget1
+        size_hint: 1, .8
+        pos_hint: {'top':.9, 'left': 1}
+    
+#Screen 4 displays the temperature and humidity graph
+<Scrn4>:
+    name: 'scrn4'
+    on_enter: self.ids.widget1.update_plot()
+    Button:
+        id: btn1
+        text: 'Wohnzimmer'
+        on_press:
+            root.manager.transition.direction = 'right'
+            root.manager.goto_scrn2()
+        size_hint: .1, .1
+        pos_hint: {'top':1, 'left':1}
+    Label:
+        id: lbl1
+        text: 'Diagramm'
+        size_hint: .8, .1
+        pos_hint: {'top':1, 'center_x':.5}
+    Label:
+        id: lbl2
+        text: root.ids.widget1.notification
+        size_hint: 1, .1
+        pos_hint: {'bottom':1, 'center_x':.5}
+    BoxLayout:
+        id: lay1
+        size_hint: 1, .8
+        pos_hint: {'center_y':.5, 'left':1}
+    TwoPlotsWidget:
+        id: widget1
+        units : ['°C','%rH']
+        titles : ['Temperatur','Luftfeuchtigkeit']
+        ax_colors : ['r','b']
+        size_hint: 1, .8
+        pos_hint: {'top':.9, 'left': 1}
+
+<Two_Scales_Widget>:
+    Button:
+        id: btn1
+        text: root.val1 + root.unit1
+        font_size: 40
+        canvas:
+            Color:
+                rgba: 0.14,0.8,0.9,0.9
+            Line:
+                circle:(self.center_x, self.center_y, 100, -150, root.num1)
+                width: 15
+                cap: 'none'
+    Button:
+        id: btn2
+        text: root.val2 + root.unit2
+        font_size: 40
+        canvas:
+            Color:
+                rgba: 0.14,0.8,0.9,0.9
+            Line:
+                circle:(self.center_x, self.center_y, 100, -150, root.num2)
+                width: 15
+                cap: 'none'
+
+<WeatherWidget>:
+    Label:
+        id: lbl1
+        text: root.city + ' ' + root.country
+        font_size: 50
+        size_hint: 1, .25
+        pos_hint: {'top':1, 'left':1}
+    AsyncImage:
+        id: img1
+        source: root.image_source
+        allow_stretch: True
+        keep_ratio: True
+        size_hint: .25, .25
+        pos_hint: {'top':.75, 'left':1}
+    Label:
+        id: lbl2
+        text: root.temperature + u' \xb0C'
+        font_size: 50
+        size_hint: .25, .25
+        pos_hint: {'top':.75, 'x':.25}
+    Label:
+        id: lbl3
+        text: root.humidity + ' %rH'
+        font_size: 25
+        size_hint: .25, .125
+        pos_hint: {'top':.75, 'x':.5}
+    Label:
+        id: lbl4
+        text: root.pressure + ' hPa'
+        font_size: 25
+        size_hint: .25, .125
+        pos_hint: {'top':.75, 'x':.75}
+    Label:
+        id: lbl5
+        text: root.wind_speed + ' m/s'
+        font_size: 25
+        size_hint: .25, .125
+        pos_hint: {'top':.625, 'x':.5}
+    Label:
+        id: lbl6
+        text: root.wind_direction + u' \xb0'
+        font_size: 25
+        size_hint: .25, .125
+        pos_hint: {'top':.625, 'x':.75}
+    ScrollView:
+        size_hint: 1, .5
+        pos_hint: {'top': .5, 'left': 1}
+        id: scroll
+        GridLayout:
+            id: grid
+            size_hint: 1, None
+            height: self.minimum_height
+            cols: 3
+            row_force_default: True
+            row_default_height: 40
+
+<TwoPlotsWidget>:

@@ -1,0 +1,9 @@
+[
+    {
+        "type": "string",
+        "title": "Stadt",
+        "desc": "Vorhersage für Stadt:",
+        "section": "Weather Widget",
+        "key": "city"
+    }
+]
