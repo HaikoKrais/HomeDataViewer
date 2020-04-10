@@ -465,6 +465,17 @@ class TwoPlotsWidget(FigureCanvasKivyAgg):
     def update_plot(self, *args, **kwargs):
         '''
         reads the latest data, updates the figure and plots it.
+
+        The data is read from a json file with the name graph.json.
+        The data is stored as a lsit of dicts with the following structure and a minimum of two elements:
+
+        [
+        {"time_code": "2019-03-01 00:02:38", "temperature": "23", "humidity": "42"}, 
+        {"time_code": "2019-03-02 00:02:38", "temperature": "24", "humidity": "55"}, 
+        {"time_code": "2019-03-03 00:02:38", "temperature": "22", "humidity": "40"}
+        ]
+
+        The graph is scaled automatically on the y-Axis. The x-Axis has major ticks for 1 day and minor ticks of 12 hours
         
         Args:
             *args (): not used. For further development.
