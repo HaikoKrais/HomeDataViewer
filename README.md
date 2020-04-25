@@ -6,12 +6,16 @@ Also view measurements and graphs form your own temperature and humidity (or any
 
 Detailed descriptions of the widgets and the framework can be found on my blog article (http://kraisnet.de/index.php/gebaeudedaten-erfassen-und-mit-kivy-visualisieren-2/18-gebaeudedaten-erfassen-und-mit-kivy-visualisieren)
 
-![GitHub Logo](/images/logo.png)
-![GitHub Logo](/images/logo.png)
-![GitHub Logo](/images/logo.png)
-![GitHub Logo](/images/logo.png)
-![GitHub Logo](/images/logo.png)
+![Screenshot 1](https://github.com/HaikoKrais/HomeDataViewer/blob/master/screenshot1.png)
+![Screenshot 2](https://github.com/HaikoKrais/HomeDataViewer/blob/master/screenshot2.png)
+![Screenshot 3](https://github.com/HaikoKrais/HomeDataViewer/blob/master/screenshot3.png)
+![Screenshot 4](https://github.com/HaikoKrais/HomeDataViewer/blob/master/screenshot4.png)
+![Screenshot 5](https://github.com/HaikoKrais/HomeDataViewer/blob/master/screenshot5.png)
 
 ## Dependencies
 All necessary dependencies you need to install to run the app can be found in the requirements.txt file.
+Parts of the dependencies can be licensed under different licenses than this repo. Please be sure to credit these appropriately and hand over the licences if you distribute packages including the dependencies.
 
+## Sources
+https://kivy.org/#home
+https://matplotlib.org/
