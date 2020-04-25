@@ -6,5 +6,12 @@ Also view measurements and graphs form your own temperature and humidity (or any
 
 Detailed descriptions of the widgets and the framework can be found on my blog article (http://kraisnet.de/index.php/gebaeudedaten-erfassen-und-mit-kivy-visualisieren-2/18-gebaeudedaten-erfassen-und-mit-kivy-visualisieren)
 
+![GitHub Logo](/images/logo.png)
+![GitHub Logo](/images/logo.png)
+![GitHub Logo](/images/logo.png)
+![GitHub Logo](/images/logo.png)
+![GitHub Logo](/images/logo.png)
+
+## Dependencies
 All necessary dependencies you need to install to run the app can be found in the requirements.txt file.
 
