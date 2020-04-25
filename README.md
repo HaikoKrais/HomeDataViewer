@@ -17,5 +17,5 @@ All necessary dependencies you need to install to run the app can be found in th
 Parts of the dependencies can be licensed under different licenses than this repo. Please be sure to credit these appropriately and hand over the licences if you distribute packages including the dependencies.
 
 ## Sources
-https://kivy.org/#home
-https://matplotlib.org/
+* https://kivy.org/#home
+* https://matplotlib.org/
