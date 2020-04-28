@@ -31,6 +31,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as dt
 from datetime import datetime
 from kivy.uix.settings import SettingsWithSidebar
+import os
 
 class MyScreens(ScreenManager):
     '''
@@ -100,7 +101,8 @@ class Scrn2(Screen):
         Returns:
             (float): Scaled value.
         '''
-        self.ids.widget1.show_data('data.json')
+
+        self.ids.widget1.show_data(App.get_running_app().config.get('Two Scales Widget','data_source'))
                 
 class Scrn3(Screen):
     def __init__(self, **kwargs):
@@ -206,6 +208,7 @@ class Two_Scales_Widget(BoxLayout):
 
         Args:
             filename (str): Path to the file which contains the data to display.
+                            Path needs to be an absolute path.
 
         Returns:
             Nothing.
@@ -300,6 +303,8 @@ class WeatherWidget(RelativeLayout):
 
         Returns:
             Nothing.
+
+        The files are stored in the folder where the MyVisuApp.py file is located
         '''
         
         #open the url and decode the json data
@@ -311,7 +316,9 @@ class WeatherWidget(RelativeLayout):
                 my_filename = file_name + '.json'
                     
                 #save the file
-                with open(my_filename, 'w') as write_file:
+                fileDir = os.path.dirname(os.path.abspath(__file__))
+                absFilename = os.path.join(fileDir, my_filename)
+                with open(absFilename, 'w') as write_file:
                     json.dump(data, write_file)
 
         except urllib.error.HTTPError as e:
@@ -335,8 +342,8 @@ class WeatherWidget(RelativeLayout):
         
         my_city = App.get_running_app().config.get('Weather Widget', 'city')
         
-        now_url = 'http://api.openweathermap.org/data/2.5/weather?q={}de&APPID=YOUR_API_KEY_HERE'.format(my_city) 
-        forecast_url = 'http://api.openweathermap.org/data/2.5/forecast?q={}&APPID=YOUR_API_KEY_HERE'.format(my_city)
+        now_url = 'http://api.openweathermap.org/data/2.5/weather?q={}de&APPID=YOUR API KEY HERE'.format(my_city) 
+        forecast_url = 'http://api.openweathermap.org/data/2.5/forecast?q={}&APPID=YOUR API KEY HERE'.format(my_city)
 
         self.get_http_to_json(now_url, 'now')
         self.get_http_to_json(forecast_url, 'forecast')
@@ -359,11 +366,15 @@ class WeatherWidget(RelativeLayout):
 
         Raises:
             FileNotFoundError: Raised if no now.json file is found
+
+        The files searched for in the folder where teh MyVisuApp.py file is located. See get_http_to_json for reference
         '''
 
         #Read data from json files and update bound properties
         try:          
-            with open('now.json', 'r') as read_file:
+            fileDir = os.path.dirname(os.path.abspath(__file__))
+            absFilename = os.path.join(fileDir, 'now.json')
+            with open(absFilename, 'r') as read_file:
                 data=json.load(read_file)
 
             self.city = data.get('name','nn')
@@ -400,7 +411,9 @@ class WeatherWidget(RelativeLayout):
 
         #Read data from json files and update bound properties
         try:
-            with open('forecast.json', 'r') as read_file:
+            fileDir = os.path.dirname(os.path.abspath(__file__))
+            absFilename = os.path.join(fileDir, 'forecast.json')
+            with open(absFilename, 'r') as read_file:
                 data=json.load(read_file)
                 self.forecast=data
 
@@ -465,17 +478,6 @@ class TwoPlotsWidget(FigureCanvasKivyAgg):
     def update_plot(self, *args, **kwargs):
         '''
         reads the latest data, updates the figure and plots it.
-
-        The data is read from a json file with the name graph.json.
-        The data is stored as a lsit of dicts with the following structure and a minimum of two elements:
-
-        [
-        {"time_code": "2019-03-01 00:02:38", "temperature": "23", "humidity": "42"}, 
-        {"time_code": "2019-03-02 00:02:38", "temperature": "24", "humidity": "55"}, 
-        {"time_code": "2019-03-03 00:02:38", "temperature": "22", "humidity": "40"}
-        ]
-
-        The graph is scaled automatically on the y-Axis. The x-Axis has major ticks for 1 day and minor ticks of 12 hours
         
         Args:
             *args (): not used. For further development.
@@ -486,8 +488,14 @@ class TwoPlotsWidget(FigureCanvasKivyAgg):
         '''
 
         #Read the data to show from a file and store it
-        with open('graph.json', 'r') as read_file:
+        fileDir = os.path.dirname(os.path.abspath(__file__))
+        absFilename = os.path.join(fileDir, 'graph.json')
+        with open(absFilename, 'r') as read_file:
             data = json.load(read_file)
+
+        self.timestamp.clear()
+        self.temperature.clear()
+        self.humidity.clear()
 
         for index in data:
             self.timestamp.append(datetime.fromtimestamp(mktime(strptime(index['time_code'],'%Y-%m-%d %H:%M:%S'))))
@@ -538,7 +546,10 @@ class MyVisuApp(App):
         '''
         
         self.settings_cls = SettingsWithSidebar
-        self.config.read('mysettings.ini')
+        
+        fileDir = os.path.dirname(os.path.abspath(__file__))
+        absFilename = os.path.join(fileDir, 'mysettings.ini')
+        self.config.read(absFilename)
         return MyScreens()
 
 
@@ -555,8 +566,11 @@ class MyVisuApp(App):
             Nothing.
         '''
         
-        settings.add_json_panel('Weather Widget', self.config, 'settings_weather_widget.json')
-        settings.add_json_panel('Two Scales Widget', self.config, 'settings_two_scales_widget.json')
+        fileDir = os.path.dirname(os.path.abspath(__file__))
+        absFilename1 = os.path.join(fileDir, 'settings_weather_widget.json')
+        absFilename2 = os.path.join(fileDir, 'settings_two_scales_widget.json')
+        settings.add_json_panel('Weather Widget', self.config, absFilename1)
+        settings.add_json_panel('Two Scales Widget', self.config, absFilename2)
 
     def on_config_change(self, config, section, key, value):
         '''

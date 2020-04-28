@@ -26,5 +26,12 @@
         "desc": "Untergrenze für Feuchtigkeit",
         "section": "Two Scales Widget",
         "key": "humidity_lower_limit"
+    },
+    {
+        "type": "path",
+        "title": "Datenquelle",
+        "desc": "JSON Quelldatei",
+        "section": "Two Scales Widget",
+        "key": "data_source"
     }
 ]

@@ -52,7 +52,7 @@
 #Screen 2 displays the temperature and humidity
 <Scrn2>:
     name: 'scrn2'
-    on_enter: self.ids.widget1.show_data('data.json')
+    on_enter: self.ids.widget1.show_data(app.get_running_app().config.get('Two Scales Widget','data_source'))
     Button:
         id: back
         text: 'Hauptmenu'
