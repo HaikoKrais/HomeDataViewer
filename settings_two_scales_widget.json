@@ -30,8 +30,15 @@
     {
         "type": "path",
         "title": "Datenquelle",
-        "desc": "JSON Quelldatei",
+        "desc": "JSON Quelldatei für aktuelle Werte",
         "section": "Two Scales Widget",
-        "key": "data_source"
+        "key": "data_source_scales"
+    },
+    {
+        "type": "path",
+        "title": "Datenquelle",
+        "desc": "JSON Quelldatei für Graph",
+        "section": "Two Scales Widget",
+        "key": "data_source_graph"
     }
 ]

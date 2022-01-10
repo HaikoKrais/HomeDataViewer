@@ -10,8 +10,6 @@
         id: scrn2
     Scrn3:
         id: scrn3
-    Scrn4:
-        id: scrn4
     Scrn5:
         id: scrn5
     Scrn6:
@@ -85,14 +83,6 @@
             root.manager.goto_scrn1()
         size_hint: .1, .1
         pos_hint: {'top':1, 'left':1}
-    Button:
-        id: btn1
-        text: 'Diagramm'
-        on_press:
-            root.manager.transition.direction = 'right'
-            root.manager.goto_scrn4()
-        size_hint: .1, .1
-        pos_hint: {'top':1, 'right':1}
     Label:
         id: lbl1
         text: 'Wohnzimmer'
@@ -103,10 +93,31 @@
         text: 'Zeitstempel: ' + root.ids.widget1.val3
         size_hint: 1, .1
         pos_hint: {'bottom':1, 'center_x':.5}
-    TwoScalesWidget:
-        id: widget1
-        size_hint: 1, .8
-        pos_hint: {'top':.9, 'left': 1}
+    ScrollView:
+        id: scroll1
+        size_hint: 1, .85
+        pos_hint: {'top': .85, 'left':1}
+        GridLayout:
+            id: grid1
+            size_hint: 1, None
+            height: self.minimum_height
+            cols: 1
+            row_force_default: True
+            row_default_height: root.height * 0.85
+            TwoScalesWidget:
+                id: widget1
+                size_hint: 1, .8
+                pos_hint: {'top':.9, 'left': 1}
+            TwoPlotsSharedXWidget:
+                id: widget2
+                units : ['°C','%rH']
+                titles : ['Temperatur','Luftfeuchtigkeit']
+                ax_colors : ['r','b']
+                sourceX: root.timestamp
+                sourceY: [root.temperature, root.humidity]
+                formatter: '%d-%B'
+                size_hint: 1, .8
+                pos_hint: {'top':.9, 'left': 1}
 
 #Screen 3 displays the weather forecast
 <Scrn3>:
@@ -131,43 +142,6 @@
         pos_hint: {'bottom':1, 'center_x':.5}
     WeatherWidget:
         id: widget1
-        size_hint: 1, .8
-        pos_hint: {'top':.9, 'left': 1}
-
-#Screen 4 displays the temperature and humidity graph
-<Scrn4>:
-    name: 'scrn4'
-    on_enter: self.ids.widget1.update_plot()
-    Button:
-        id: btn1
-        text: 'Wohnzimmer'
-        on_press:
-            root.manager.transition.direction = 'right'
-            root.manager.goto_scrn2()
-        size_hint: .1, .1
-        pos_hint: {'top':1, 'left':1}
-    Label:
-        id: lbl1
-        text: 'Diagramm'
-        size_hint: .8, .1
-        pos_hint: {'top':1, 'center_x':.5}
-    Label:
-        id: lbl2
-        text: root.ids.widget1.notification
-        size_hint: 1, .1
-        pos_hint: {'bottom':1, 'center_x':.5}
-    BoxLayout:
-        id: lay1
-        size_hint: 1, .8
-        pos_hint: {'center_y':.5, 'left':1}
-    TwoPlotsSharedXWidget:
-        id: widget1
-        units : ['°C','%rH']
-        titles : ['Temperatur','Luftfeuchtigkeit']
-        ax_colors : ['r','b']
-        sourceX: root.timestamp
-        sourceY: [root.temperature, root.humidity]
-        formatter: '%d-%B'
         size_hint: 1, .8
         pos_hint: {'top':.9, 'left': 1}
 

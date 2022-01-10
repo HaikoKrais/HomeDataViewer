@@ -12,6 +12,7 @@ Classes:
     Scrn4: Shows the temperature and humidity graph of the last 24 hours. Uses TwoPlotWidgets
     TwoPlotsWidget: Matplotlib Backend visualizing two graphs with shared x-Axis
     Scrn5: Shows a corona widget displaying current and cumulative infections
+    Scrn6: Shows a widget representing the most common pollen for a chosen region including a forecast
 
 See details and more explanations at: http://kraisnet.de/index.php/gebaeudedaten-erfassen-und-mit-kivy-visualisieren-2/18-gebaeudedaten-erfassen-und-mit-kivy-visualisieren
 '''
@@ -64,7 +65,7 @@ class MyScreens(ScreenManager):
         self.current = 'scrn5'
 
     def goto_scrn6(self):
-        '''switches to screen 5'''
+        '''switches to screen 6'''
         self.current = 'scrn6'
 
 
@@ -86,6 +87,10 @@ class Scrn2(Screen):
         None
     '''
 
+    timestamp = ListProperty([])
+    temperature = ListProperty([])
+    humidity = ListProperty([])
+
     def __init__(self, **kwargs):
         '''
         Start updating the screen regularly.
@@ -100,28 +105,62 @@ class Scrn2(Screen):
             Nothing.
         '''
         super(Scrn2, self).__init__(**kwargs)
-        Clock.schedule_interval(self.update, 60)
-        Clock.schedule_once(self.update)
+        Clock.schedule_interval(self.update_scales, 60)
+        Clock.schedule_once(self.update_scales)
+        Clock.schedule_interval(self.update_graph, 60)
+        Clock.schedule_once(self.update_graph)
 
-    def update(self, dt):
+    def update_scales(self, dt):
         '''
-        calls funtions to update the screen.
+        updates the scales
 
         Args:
             dt (int): interval in seconds in which the funtion will be called
 
         Returns:
-            (float): Scaled value.
+            nothing
         '''
         low1 = float(App.get_running_app().config.get('Two Scales Widget', 'temp_lower_limit'))
         high1 = float(App.get_running_app().config.get('Two Scales Widget', 'temp_upper_limit'))
         low2 = float(App.get_running_app().config.get('Two Scales Widget', 'humidity_lower_limit'))
         high2 = float(App.get_running_app().config.get('Two Scales Widget', 'humidity_upper_limit'))
 
-        fileDir = os.path.dirname(os.path.abspath(__file__))
-        absFilename = os.path.join(fileDir, 'data.json')
+        filename = App.get_running_app().config.get('Two Scales Widget', 'data_source_scales')
 
-        self.ids.widget1.show_data(filename=absFilename, low1=low1, high1=high1, low2=low2, high2=high2)
+        self.ids.widget1.show_data(filename=filename, low1=low1, high1=high1, low2=low2, high2=high2)
+
+    def update_graph(self, dt):
+        '''
+        updates the plot
+
+        Args:
+            dt (int): interval in seconds in which the funtion will be called
+
+        Returns:
+            nothing
+        '''
+
+        # Read the data to show from a file and store it
+        filename = App.get_running_app().config.get('Two Scales Widget', 'data_source_graph')
+
+        try:
+            with open(filename, 'r') as read_file:
+                data = json.load(read_file)
+                print(data)
+        except FileNotFoundError:
+            print('File not found for temperature and humidity graph')
+            return
+
+        self.timestamp.clear()
+        self.temperature.clear()
+        self.humidity.clear()
+
+        for item in data:
+            self.timestamp.append(datetime.fromtimestamp(mktime(strptime(item['time_code'], '%Y-%m-%d %H:%M:%S'))))
+            self.temperature.append(float(item['temperature']))
+            self.humidity.append(float(item['humidity']))
+
+        self.ids.widget2.update_plot()
 
 
 class Scrn3(Screen):
@@ -155,66 +194,6 @@ class Scrn3(Screen):
         city = App.get_running_app().config.get('Weather Widget', 'city')
         self.ids.widget1.download_current_weather(city=city)
         self.ids.widget1.download_forecast(city=city)
-
-
-class Scrn4(Screen):
-
-#TODO: Make a proper App out of this script
-
-    timestamp = ListProperty([])
-    temperature = ListProperty([])
-    humidity = ListProperty([])
-
-    def __init__(self, **kwargs):
-        super(Scrn4, self).__init__(**kwargs)
-        '''
-        Start updating the screen regularly.
-
-        A clock will call the update function in a selectable interval.
-        Put all functions you want to update into the update function
-
-        Args:
-            **kwargs (): not used. For further development.
-
-        Returns:
-            Nothing.
-        '''
-        Clock.schedule_interval(self.update, 600)
-        Clock.schedule_once(self.update)
-
-    def update(self, dt):
-        '''
-        calls funtions to update the screen.
-
-        Args:
-            dt (int): interval in seconds in which the funtion will be called
-
-        Returns:
-            (float): Scaled value.
-        '''
-
-        # Read the data to show from a file and store it
-        fileDir = os.path.dirname(os.path.abspath(__file__))
-        absFilename = os.path.join(fileDir, 'seven_day_data.json')
-
-        try:
-            with open(absFilename, 'r') as read_file:
-                data = json.load(read_file)
-        except FileNotFoundError:
-            print('File not found for temperature and humidity graph')
-            return
-
-        self.timestamp.clear()
-        self.temperature.clear()
-        self.humidity.clear()
-
-        for index in data:
-            self.timestamp.append(datetime.fromtimestamp(mktime(strptime(index['time_code'], '%Y-%m-%d %H:%M:%S'))))
-            self.temperature.append(float(index['temperature']))
-            self.humidity.append(float(index['humidity']))
-
-        self.ids.widget1.update_plot()
-
 
 class Scrn5(Screen):
     def __init__(self, **kwargs):
@@ -255,12 +234,12 @@ class Scrn6(Screen):
     def __init__(self, **kwargs):
         super(Scrn6, self).__init__(**kwargs)
         '''
-        Shows the corona widget.
+        Shows the pollen widget.
 
         A clock will call the update function in a selectable interval.
         Put all functions you want to update into the update function.
         During init is the update() function called. This will download the current dataset from
-        the ECDC. The data ist updated once a day. So the interval should be large enough.
+        the DWD. The data ist updated once a day. So the interval should be large enough.
 
         Args:
             **kwargs (): not used. For further development.
@@ -351,7 +330,8 @@ class MyVisuApp(App):
         if key == 'city':
             app.root.ids['scrn3'].update(1)
         if section == 'Two Scales Widget':
-            app.root.ids['scrn2'].update(1)
+            app.root.ids['scrn2'].update_plots(1)
+            app.root.ids['scrn2'].update_graph(1)
 
 
 if __name__ == '__main__':
